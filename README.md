@@ -38,7 +38,7 @@ I'll add a little gif or video here showing how to add custom commands from my r
 ## License  
 
 You do not have to include [the full license](LICENSE) in the code because it is too long. That's why Black Wolf made [this small text](#small-license-text) that has to stay in the code.  
-If [that license](#small-license-text) can not be found in the code on this repository, you can do whatever you want with the code and I won't even care if you claim you made it.  
+If [that license](#small-license-text) can not be found in the code on this repository, you can do whatever you want with the code and I won't even care if you claim you made it. 
 
 #### Small license text
 
