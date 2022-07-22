@@ -1,0 +1,22 @@
+{{/*
+	Trigger: \A(\-|<@!?204255221017214977>\s*)+(pat|pet)+?(\s+|\z)
+	Trigger Type: Regex
+	
+	Copyright (c): FoxBoiNick , 2022
+	License: MIT
+	Repository: https://github.com/FoxBoiNick/yagpdb-cc
+*/}}
+
+
+{{ $user := .User }}
+{{ $args := parseArgs 0 "**Syntax:** `-pet [user]`" (carg "userid" "user") }}
+{{ if $args.IsSet 0 }}
+	{{ $user = userArg ($args.Get 0) }}
+{{ end }}
+{{ $links := cslice "6V8Lqi7" "GILsiTI" "8kn0NRn" "DOVjijA" "PUVUiA4"}}
+{{ $link := (joinStr "" "https://i.imgur.com/" (index $links (randInt (len $links))) ".jpg" )}}
+{{ sendMessage nil (cembed
+	"description" (joinStr "** " .Member.User.Mention "Pets" $user.Mention "**")
+	"color" (randInt 0 16777217)
+	"image" (sdict "url" $link)
+	) }}

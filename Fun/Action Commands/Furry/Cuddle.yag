@@ -1,0 +1,22 @@
+{{/*
+	Trigger: boop
+	Trigger Type: Command
+	
+	Copyright (c): FoxBoiNick , 2022
+	License: MIT
+	Repository: https://github.com/FoxBoiNick/yagpdb-cc
+*/}}
+
+
+{{ $user := .User }}
+{{ $args := parseArgs 0 "**Syntax:** `-cuddle [user]`" (carg "userid" "user") }}
+{{ if $args.IsSet 0 }}
+	{{ $user = userArg ($args.Get 0) }}
+{{ end }}
+{{ $links := cslice "cUS90iC" "k4xih1o" "SLoIVjt" "LBWMhsS" "hosFdpG" "YQ7SnEa" "Havkf1H"}}
+{{ $link := (joinStr "" "https://i.imgur.com/" (index $links (randInt (len $links))) ".jpg" )}}
+{{ sendMessage nil (cembed
+	"description" (joinStr "** " .Member.User.Mention "Cuddles With" $user.Mention "**")
+	"color" (randInt 0 16777217)
+	"image" (sdict "url" $link)
+	) }}

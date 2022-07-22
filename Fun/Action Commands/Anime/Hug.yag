@@ -1,0 +1,21 @@
+{{/*
+	Trigger: hug
+	Trigger Type: Command
+	
+	Copyright (c): FoxBoiNick , 2022
+	License: MIT
+	Repository: https://github.com/FoxBoiNick/yagpdb-cc
+*/}}
+
+
+{{ $user := .User }}
+{{ $args := parseArgs 0 "**Syntax:** `-hug [user]`" (carg "userid" "user") }}
+{{ if $args.IsSet 0 }}
+	{{ $user = userArg ($args.Get 0) }}
+{{ end }}
+{{ $img := (randInt 1 89)}}
+{{ sendMessage nil (cembed
+	"description" (joinStr "** " .Member.User.Mention "Gives" $user.Mention "A Big Hug**")
+	"color" (randInt 0 16777217)
+	"image" (sdict "url" (joinStr "" "https://cdn.nekos.life/hug/hug_" (printf "%03d" (randInt 1 89)) ".gif"))
+	) }}
