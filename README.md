@@ -19,9 +19,9 @@ So if you are looking for new custom commands take a look ;) there
 <summary>Action Commands</summary>
 
 - [Open Folder](Fun/Action%20Commands/)  
-**•** [Furry](Fun/Action%20Commands/Furry) - Furry themed action commands
-**•** [Anime](Fun/Action%20Commands/Anime) - Anime themed action commands
-
+  **•** [Furry](Fun/Action%20Commands/Furry) - Furry themed action commands  
+  **•** [Anime](Fun/Action%20Commands/Anime) - Anime themed action commands
+  
 </details>
 
 <!---
