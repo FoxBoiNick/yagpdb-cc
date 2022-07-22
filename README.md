@@ -16,11 +16,11 @@ So if you are looking for new custom commands take a look ;) there
 ## List of custom commands
 
 <details>
-<summary>Autohelp Embed</summary>
+<summary>Action Commands</summary>
 
-- [Open Folder](Autohelp_Embed)  
-**•** [command](Autohelp_Embed/command.yag) - Command that displays the main page  
-**•** [reaction](Autohelp_Embed/reaction.yag) - Reaction code that sends a dm to the user on reaction  
+- [Open Folder](Fun/Action%20Commands/)  
+**•** [Furry](Fun/Action%20Commands/Furry) - Furry themed action commands
+**•** [Anime](Fun/Action%20Commands/Anime) - Anime themed action commands
 
 </details>
 
