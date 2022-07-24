@@ -7,45 +7,45 @@
 	Repository: https://github.com/FoxBoiNick/yagpdb-cc
 */}}
 
-{{if not .ExecData}}
-	{{if reFind `(?i)(my)` .Cmd}}
-		{{ if and (dbGet .User.ID "sonaimg") (dbGet .User.ID "sonadesc")}}
-			{{$fields := cslice}}
-        		{{ if (dbGet .User.ID "sonaheight")}} {{$fields = $fields.Append (sdict "name" "Height" "value" ( print "> " ((dbGet .User.ID "sonaheight").Value)) "inline" true) }} {{end}}
-        		{{ if (dbGet .User.ID "sonaweight")}} {{$fields = $fields.Append (sdict "name" "Weight" "value" (print "> " ((dbGet .User.ID "sonaweight").Value)) "inline" true) }} {{end}}
-			{{ if (dbGet .User.ID "sonaage")}} {{$fields = $fields.Append (sdict "name" "Age" "value" (print "> " ((dbGet .User.ID "sonaage").Value)) "inline" true) }} {{end}}
-			{{$fields = $fields.Append (sdict "name" "Description" "value" (print "> " (reReplace "\n" ((dbGet .User.ID "sonadesc").Value) "\n> ") "\n\n**Ref**") "inline" false) }} 
-			{{ $embed := cembed 
-    			"title" (print .User.Username "'s Sona")
-    			"image" (sdict "url" ((dbGet .User.ID "sonaimg").Value))
-    			"color" (randInt 0 16777217)
-    			"fields" $fields
-    			}}
-			{{ sendMessage nil $embed }}
-		{{ else }}
-			{{ if (dbGet .User.ID "sonaimg")}}
-                {{sendMessage nil "You havent set a sona description yet! `-setsona desc <desc>`" }}
+{{ if not .ExecData }}
+    {{ if reFind `(?i)(my)` .Cmd }}
+        {{ if and (dbGet .User.ID "sonaimg") (dbGet .User.ID "sonadesc") }}
+            {{$fields := cslice}}
+            {{ if (dbGet .User.ID "sonaheight")}} {{$fields = $fields.Append (sdict "name" "Height" "value" ( print "> " ((dbGet .User.ID "sonaheight").Value)) "inline" true) }} {{end}}
+            {{ if (dbGet .User.ID "sonaweight")}} {{$fields = $fields.Append (sdict "name" "Weight" "value" (print "> " ((dbGet .User.ID "sonaweight").Value)) "inline" true) }} {{end}}
+            {{ if (dbGet .User.ID "sonaage")}} {{$fields = $fields.Append (sdict "name" "Age" "value" (print "> " ((dbGet .User.ID "sonaage").Value)) "inline" true) }} {{end}}
+            {{$fields = $fields.Append (sdict "name" "Description" "value" (print "> " (reReplace "\n" ((dbGet .User.ID "sonadesc").Value) "\n> ") "\n\n**Ref**") "inline" false) }} 
+            {{ $emb := cembed 
+                "title" (print .User.Username "'s Sona")
+                "image" (sdict "url" ((dbGet .User.ID "sonaimg").Value))
+                "color" (randInt 0 16777217)
+                "fields" $fields
+            }}
+            {{ sendMessage nil $emb }}
+        {{ else }}
+            {{ if (dbGet .User.ID "sonaimg")}}
+                {{sendMessage nil "You havent set a sona desc yet! `-setsona desc <desc>`" }}
             {{ else if (dbGet .User.ID "sonaimg")}}
                 {{sendMessage nil "You havent set a sona img yet! `-setsona img <img-url>`" }}
-			{{ else }}
-				{{sendMessage nil "You havent set a sona description or img yet!\n`-setsona desc <desc>` & `-setsona img <img-url>`" }}
-			{{ end }}
-		{{end}}
-	{{ else if reFind `(?i)(set)` .Cmd }}
-		{{ $what := "" }}
-		{{ $value := "" }}
-		{{ $args := parseArgs 1 "**Syntax:** `-setsona <img|desc|weight|height|age> <value>`" (carg "string" "what") (carg "string" "value") }}
-		{{ if $args.IsSet 0 }}
-			{{ $what = ($args.Get 0) }}
-			{{ $value = ($args.Get 1) }}
-		{{ end }}
-		{{ if (in (cslice "img" "desc" "weight" "height" "age") (lower $what)) }}
-			{{ if or (eq (lower $what) "img") (eq (lower $what) "ref") }}
+            {{ else }}
+                {{sendMessage nil "You havent set a sona desc or img yet!\n`-setsona desc <desc>` & `-setsona img <img-url>`" }}
+            {{ end }}
+        {{end}}
+    {{ else if reFind `(?i)(set)` .Cmd }}
+        {{ $set := "" }}
+        {{ $val := "" }}
+        {{ $args := parseArgs 1 "**Syntax:** `-setsona <img|desc|weight|height|age> <value>`" (carg "string" "what") (carg "string" "value") }}
+        {{ if $args.IsSet 0 }}
+            {{ $set = ($args.Get 0) }}
+            {{ $val = ($args.Get 1) }}
+        {{ end }}
+        {{ if (in (cslice "img" "desc" "weight" "height" "age") (lower $set)) }}
+            {{ if or (eq (lower $set) "img") (eq (lower $set) "ref") }}
                 {{ if not (eq (len .Message.Attachments) 0) }}
                     {{ $img := (structToSdict  (index .Message.Attachments 0)) }}
-                    {{ if (eq (kindOf $img.ProxyURL) "string") }}
+                    {{ if (eq (kindOf $img.URL) "string") }}
                         {{ if (reFindAllSubmatches `https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,63}\b(?:(?:(?:,?[-a-zA-Z0-9@:%_\+.~#?!&/=*]*)|(?:,?\([-a-zA-Z0-9@:%_\+.~#?!&/=*]*\))*|\[\])*)` ($img.ProxyURL)) }} 
-                            {{ dbSet $.User.ID "sonaimg" ($img.ProxyURL) }}
+                            {{ dbSet $.User.ID "sonaimg" ($img.URL) }}
                             doneso 
                         {{ else }} 
                             thats not a valid link!
@@ -54,9 +54,9 @@
                         {{ sendMessage nil "Invalid img url!" }}
                     {{ end }}
                 {{ else }}
-                    {{ if not (eq (kindOf $value) "invalid") }}
-                        {{ if (reFindAllSubmatches `https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,63}\b(?:(?:(?:,?[-a-zA-Z0-9@:%_\+.~#?!&/=*]*)|(?:,?\([-a-zA-Z0-9@:%_\+.~#?!&/=*]*\))*|\[\])*)` ($value)) }} 
-                            {{ dbSet $.User.ID "sonaimg" ($value) }}
+                    {{ if not (eq (kindOf $val) "invalid") }}
+                        {{ if (reFindAllSubmatches `https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,63}\b(?:(?:(?:,?[-a-zA-Z0-9@:%_\+.~#?!&/=*]*)|(?:,?\([-a-zA-Z0-9@:%_\+.~#?!&/=*]*\))*|\[\])*)` ($val)) }} 
+                            {{ dbSet $.User.ID "sonaimg" ($val) }}
                             doneso 
                         {{ else }} 
                             thats not a valid link!
@@ -65,10 +65,10 @@
                         {{ sendMessage nil "**Syntax:** `-setsona img <img-url>`" }}
                     {{ end }}
                 {{ end }}
-			{{ else if (eq (lower $what) "desc") }}
+            {{ else if (eq (lower $set) "desc") }}
                 {{ if not (le (len .StrippedMsg) 5)}}
                     {{ if le (len ( slice .StrippedMsg 5 (len .StrippedMsg))) 250}} 
-                        {{ dbSet $.User.ID "sonadesc" ($value) }}
+                        {{ dbSet $.User.ID "sonadesc" ($val) }}
                         doneso 
                     {{ else }} 
                         Please keep your description below 250 chars!
@@ -76,10 +76,10 @@
                 {{ else }}
                     {{ sendMessage nil "**Syntax:** `-setsona desc <description>`" }}
                 {{ end }}
-			{{ else if (eq (lower $what) "weight") }}
+            {{ else if (eq (lower $set) "weight") }}
                 {{ if not (le (len .StrippedMsg) 5)}}
                     {{ if le (len ( slice .StrippedMsg 5 (len .StrippedMsg))) 10}} 
-                        {{ dbSet $.User.ID "sonaweight" ($value) }}
+                        {{ dbSet $.User.ID "sonaweight" ($val) }}
                         doneso 
                     {{ else }} 
                         Are you sure thats a weight?
@@ -87,10 +87,10 @@
                 {{ else }}
                     {{ sendMessage nil "**Syntax:** `-setsona weight <weight>`" }}
                 {{ end }}
-			{{ else if (eq (lower $what) "height") }}
-				{{ if not (le (len .StrippedMsg) 5)}}
+            {{ else if (eq (lower $set) "height") }}
+                {{ if not (le (len .StrippedMsg) 5)}}
                     {{ if le (len ( slice .StrippedMsg 5 (len .StrippedMsg))) 10}} 
-                        {{ dbSet $.User.ID "sonaheight" ($value) }}
+                        {{ dbSet $.User.ID "sonaheight" ($val) }}
                         doneso 
                     {{ else }} 
                         Are you sure thats a height?
@@ -98,29 +98,28 @@
                 {{ else }}
                     {{ sendMessage nil "**Syntax:** `-setsona height <height>`" }}
                 {{ end }}
-			{{ else if (eq (lower $what) "age") }}
+            {{ else if (eq (lower $set) "age") }}
                 {{ if not (le (len .StrippedMsg) 5)}}
-                    {{ if (reFindAllSubmatches `[0-9]` ($value)) }} 
-                        {{ dbSet $.User.ID "sonaage" ($value) }}
-                        doneso 
+                    {{ if (reFindAllSubmatches `[0-9]` ($val)) }} 
+                        {{ dbSet $.User.ID "sonaage" ($val) }}
+                        doneso
                     {{ else }} 
                         Are you sure thats an age?
                     {{ end }}
                 {{ else }}
                     {{ sendMessage nil "**Syntax:** `-setsona age <age>`" }}
                 {{ end }}
-			{{ else }}
-			{{ end }}
-		{{ else }}
-			{{ sendMessage nil (print "Invalid value passed for Arg 1\n" "**Syntax:** `-setsona <img|desc|weight|height|age> <value>`") }}
-		{{ end }}
-	{{ else if reFind `(?i)(del)` .Cmd }}
+            {{ end }}
+        {{ else }}
+            {{ sendMessage nil (print "Invalid value:\n" "**Syntax:** `-setsona <img|desc|weight|height|age> <value>`") }}
+        {{ end }}
+    {{ else if reFind `(?i)(del)` .Cmd }}
         {{ $conf := "no"}}
         {{ try }}
             {{ $conf = (index .CmdArgs 0)}}
         {{ catch }}
         {{ end }}
-		{{ if and (dbGet .User.ID "sonadel") (eq (lower $conf) "confirm")}}
+        {{ if and (dbGet .User.ID "sonadel") (eq (lower $conf) "confirm")}}
             {{ dbDel .User.ID "sonaimg" }}
             {{ dbDel .User.ID "sonadesc" }}
             {{ dbDel .User.ID "sonaweight" }}
@@ -137,7 +136,7 @@
             {{ if (dbGet .User.ID "sonadel") }}
                 {{ dbDel .User.ID "sonadel" }}
                 {{ dbDel .User.ID "sonadelmid" }}
-                {{ $mID := sendMessageRetID  nil "you didn't type `-delsona confirm`! cancelled sona deletion!" }}
+                {{ $mID := sendMessageRetID  nil "you didn't `-delsona confirm`! cancelled deletion!" }}
                 {{ deleteMessage nil $mID 10 }}
                 {{ deleteTrigger 10 }}
             {{ else }}
@@ -148,37 +147,37 @@
                 {{ deleteMessage nil $mID 30 }}
             {{ end }}
         {{ end }}
-	{{ else }}
+    {{ else }}
         {{ $user := .User }}
-            {{ $args := parseArgs 0 "**Syntax:** `-sona [user]`" (carg "userid" "user") }}
-            {{ if $args.IsSet 0 }}
-	            {{ $user = userArg ($args.Get 0) }}
-            {{ end }}
-		{{ if and (dbGet $user.ID "sonaimg") (dbGet $user.ID "sonadesc")}}
-			{{$fields := cslice}}
-        		{{ if (dbGet $user.ID "sonaheight")}} {{$fields = $fields.Append (sdict "name" "Height" "value" ( print "> " ((dbGet $user.ID "sonaheight").Value)) "inline" true) }} {{end}}
-        		{{ if (dbGet $user.ID "sonaweight")}} {{$fields = $fields.Append (sdict "name" "Weight" "value" (print "> " ((dbGet $user.ID "sonaweight").Value)) "inline" true) }} {{end}}
-			{{ if (dbGet $user.ID "sonaage")}} {{$fields = $fields.Append (sdict "name" "Age" "value" (print "> " ((dbGet $user.ID "sonaage").Value)) "inline" true) }} {{end}}
-			{{$fields = $fields.Append (sdict "name" "Description" "value" (print "> " (reReplace "\n" ((dbGet $user.ID "sonadesc").Value) "\n> ") "\n\n**Ref**") "inline" false) }} 
-			{{ $embed := cembed 
-    			"title" (print $user.Username "'s Sona")
-    			"image" (sdict "url" ((dbGet $user.ID "sonaimg").Value))
-    			"color" (randInt 0 16777217)
-    			"fields" $fields
-    			}}
-			{{ sendMessage nil $embed }}
-		{{ else }}
+        {{ $args := parseArgs 0 "**Syntax:** `-sona [user]`" (carg "userid" "user") }}
+        {{ if $args.IsSet 0 }}
+            {{ $user = userArg ($args.Get 0) }}
+        {{ end }}
+        {{ if and (dbGet $user.ID "sonaimg") (dbGet $user.ID "sonadesc")}}
+            {{$fields := cslice}}
+            {{ if (dbGet $user.ID "sonaheight")}} {{$fields = $fields.Append (sdict "name" "Height" "value" ( print "> " ((dbGet $user.ID "sonaheight").Value)) "inline" true) }} {{end}}
+            {{ if (dbGet $user.ID "sonaweight")}} {{$fields = $fields.Append (sdict "name" "Weight" "value" (print "> " ((dbGet $user.ID "sonaweight").Value)) "inline" true) }} {{end}}
+            {{ if (dbGet $user.ID "sonaage")}} {{$fields = $fields.Append (sdict "name" "Age" "value" (print "> " ((dbGet $user.ID "sonaage").Value)) "inline" true) }} {{end}}
+            {{$fields = $fields.Append (sdict "name" "Description" "value" (print "> " (reReplace "\n" ((dbGet $user.ID "sonadesc").Value) "\n> ") "\n\n**Ref**") "inline" false) }} 
+            {{ $embed := cembed 
+                "title" (print $user.Username "'s Sona")
+                "image" (sdict "url" ((dbGet $user.ID "sonaimg").Value))
+                "color" (randInt 0 16777217)
+                "fields" $fields
+            }}
+            {{ sendMessage nil $embed }}
+        {{ else }}
             {{ if eq $user.ID (.User.ID) }}
                 {{ if (dbGet .User.ID "sonaimg")}}
-                    {{sendMessage nil "You havent set a sona description yet! `-setsona desc <desc>`" }}
+                    {{sendMessage nil "You havent set a sona desc yet! `-setsona desc <desc>`" }}
                 {{ else if (dbGet .User.ID "sonaimg")}}
                     {{sendMessage nil "You havent set a sona img yet! `-setsona img <img-url>`" }}
                 {{ else }}
-                    {{sendMessage nil "You havent set a sona description or img yet!\n`-setsona desc <desc>` & `-setsona img <img-url>`" }}
+                    {{sendMessage nil "You havent set a sona desc or img yet!\n`-setsona desc <desc>` & `-setsona img <img-url>`" }}
                 {{ end }}
             {{ else }}
-			    {{ sendMessage nil "This person hasn't made a sona!" }}
+                {{ sendMessage nil "This person hasn't made a sona!" }}
             {{ end }}
-		{{end}}
-	{{ end }}
-{{end}}
+        {{end}}
+    {{ end }}
+{{ end }}
