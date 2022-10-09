@@ -67,11 +67,11 @@
                 {{ end }}
             {{ else if (eq (lower $set) "desc") }}
                 {{ if not (le (len .StrippedMsg) 5)}}
-                    {{ if le (len ( slice .StrippedMsg 5 (len .StrippedMsg))) 250}} 
+                    {{ if not (reFind `(?:^(?:.|[\r\n]){1000,}$)|^(?:[^\n]*\n){25,}[^\n]*$` .StrippedMsg) }} 
                         {{ dbSet $.User.ID "sonadesc" ($val) }}
                         doneso 
                     {{ else }} 
-                        Please keep your description below 250 chars!
+                        Description should be less than 1000 characters and 25 lines!
                     {{ end }}
                 {{ else }}
                     {{ sendMessage nil "**Syntax:** `-setsona desc <description>`" }}
