@@ -71,7 +71,7 @@
                         {{ dbSet $.User.ID "sonadesc" ($val) }}
                         doneso 
                     {{ else }} 
-                        Description should be less than 1000 characters and 25 lines!
+                        Desc should be less than 1000 characters and 25 lines!
                     {{ end }}
                 {{ else }}
                     {{ sendMessage nil "**Syntax:** `-setsona desc <description>`" }}
@@ -89,7 +89,7 @@
                 {{ end }}
             {{ else if (eq (lower $set) "height") }}
                 {{ if not (le (len .StrippedMsg) 5)}}
-                    {{ if (reFind `^((\w* )*)(((\d*')*)|((\d*")*)|((\d*')*)((\d*")*))$` .StrippedMsg) }}
+                    {{ if (reFind `^((\w* )*)(((\d*('|’))*)|((\d*("|”))*)|((\d*('|’))*)((\d*("|”))*))$` .StrippedMsg) }}
                         {{ dbSet $.User.ID "sonaheight" ($val) }}
                         doneso 
                     {{ else }} 
