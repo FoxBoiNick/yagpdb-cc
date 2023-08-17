@@ -78,7 +78,7 @@
                 {{ end }}
             {{ else if (eq (lower $set) "weight") }}
                 {{ if not (le (len .StrippedMsg) 5)}}
-                    {{ if le (len ( slice .StrippedMsg 5 (len .StrippedMsg))) 10}} 
+                    {{ if not (reFind `(\d+)\s*((g)|(gr)|(oz)|(pounds?)|(grams?)|(lbs?)|(kgs?)|(kilos?))` .StrippedMsg) }} 
                         {{ dbSet $.User.ID "sonaweight" ($val) }}
                         doneso 
                     {{ else }} 
@@ -89,11 +89,11 @@
                 {{ end }}
             {{ else if (eq (lower $set) "height") }}
                 {{ if not (le (len .StrippedMsg) 5)}}
-                    {{ if le (len ( slice .StrippedMsg 5 (len .StrippedMsg))) 10}} 
+                    {{ if not (reFind `^((\w* )*)(((\d*')*)|((\d*")*)|((\d*')*)((\d*")*))$` .StrippedMsg) }}
                         {{ dbSet $.User.ID "sonaheight" ($val) }}
                         doneso 
                     {{ else }} 
-                        Are you sure thats a height?
+                        Are you sure thats a height? use ' or "!
                     {{ end }}
                 {{ else }}
                     {{ sendMessage nil "**Syntax:** `-setsona height <height>`" }}
