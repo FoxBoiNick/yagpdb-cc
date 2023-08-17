@@ -78,7 +78,7 @@
                 {{ end }}
             {{ else if (eq (lower $set) "weight") }}
                 {{ if not (le (len .StrippedMsg) 5)}}
-                    {{ if not (reFind `(\d+)\s*((g)|(gr)|(oz)|(pounds?)|(grams?)|(lbs?)|(kgs?)|(kilos?))` .StrippedMsg) }} 
+                    {{ if (reFind `(\d+)\s*((g)|(gr)|(oz)|(pounds?)|(grams?)|(lbs?)|(kgs?)|(kilos?))` .StrippedMsg) }} 
                         {{ dbSet $.User.ID "sonaweight" ($val) }}
                         doneso 
                     {{ else }} 
@@ -89,7 +89,7 @@
                 {{ end }}
             {{ else if (eq (lower $set) "height") }}
                 {{ if not (le (len .StrippedMsg) 5)}}
-                    {{ if not (reFind `^((\w* )*)(((\d*')*)|((\d*")*)|((\d*')*)((\d*")*))$` .StrippedMsg) }}
+                    {{ if (reFind `^((\w* )*)(((\d*')*)|((\d*")*)|((\d*')*)((\d*")*))$` .StrippedMsg) }}
                         {{ dbSet $.User.ID "sonaheight" ($val) }}
                         doneso 
                     {{ else }} 
